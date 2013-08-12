@@ -1,0 +1,113 @@
+.container
+  .row
+    - if flash[:error]
+      .alert.alert-error #{flash[:error]}
+    - if flash[:warning]
+      .alert #{flash[:warning]}
+    - if flash[:notice]
+      .alert.alert-success #{flash[:notice]}
+    .hero-unit
+      - if authorized?
+        %form#buildvmform.form-horizontal{:action => '/build', :method => 'post'}
+          %legend Create a New Virtual Machine
+          - buildvmform_control_group(:vmname) do
+            %label.control-label{:for => 'vmname'}VM Name
+            .controls
+              %input{:type => 'text', :name => 'vmname', :id => 'vmname', :value => buildvmform_vmname_value}
+              - buildvmform_show_validation_error(:vmname)
+          - buildvmform_control_group(:owner) do
+            %label.control-label{:for => 'owner'}Owner's email
+            .controls
+              %input{:type => 'text', :name => 'owner', :id => 'owner', :value => (params[:owner] || session[:username])}
+              - buildvmform_show_validation_error(:owner)
+          - buildvmform_control_group(:vmramsize) do
+            %label.control-label{:for => 'vmramsize'}Amount of RAM
+            .controls
+              #bgvmramsize.btn-group{'data-toggle' => 'buttons-radio'}
+                - VMDeploy[:deployer_params][:ram_sizes].each do |ramsize|
+                  %button.btn{:type => 'button'} #{ramsize}
+              %input{:type => 'hidden', :name => 'vmramsize', :id => 'vmramsize', :value => params[:vmramsize]}
+              - buildvmform_show_validation_error(:vmramsize)
+          - buildvmform_control_group(:vmnumberofcpus) do
+            %label.control-label{:for => 'vmnumberofcpus'}Number of CPUs
+            .controls
+              #bgvmnumberofcpus.btn-group{'data-toggle' => 'buttons-radio'}
+                - VMDeploy[:deployer_params][:number_of_cpus].each do |ncpus|
+                  %button.btn{:type => 'button'} #{ncpus}
+              %input{:type => 'hidden', :name => 'vmnumberofcpus', :id => 'vmnumberofcpus', :value => params[:vmnumberofcpus]}
+              - buildvmform_show_validation_error(:vmnumberofcpus)
+          - buildvmform_control_group(:vmnetwork) do
+            %label.control-label{:for => 'vmnetwork'}Network
+            .controls
+              #bgvmnetwork.btn-group{'data-toggle' => 'buttons-radio'}
+                - VMDeploy[:deployer_params][:networks].each do |network|
+                  %button.btn{:type => 'button'} #{network}
+              %input{:type => 'hidden', :name => 'vmnetwork', :id => 'vmnetwork', :value => params[:vmnetwork]}
+              - buildvmform_show_validation_error(:vmnetwork)
+          - buildvmform_control_group(:rubyversion) do
+            %label.control-label{:for => 'rubyversion'}Ruby Version
+            .controls
+              %select{:name => 'rubyversion', :id => 'rubyversion'}
+                - VMDeploy[:deployer_params][:ruby_versions].each do |ruby|
+                  %option{:value => ruby} #{ruby}
+              - buildvmform_show_validation_error(:rubyversion)
+          - buildvmform_control_group(:department) do
+            %label.control-label{:for => 'department'}Department
+            .controls
+              %select{:name => 'department', :id => 'department'}
+                - VMDeploy[:deployer_params][:departments].each do |dpt|
+                  %option{:value => dpt, :selected => params[:department] == dpt } #{dpt}
+              - buildvmform_show_validation_error(:department)
+          .control-group
+            .controls
+              #submit.btn.btn-primary{:type => 'submit'}Build VM
+              #clear.btn Clear
+      - else
+        %a.btn.btn-primary.btn-large{:href => "/auth/google"} Login with Google Apps
+        %img#splashimage.pull-right{:src => "/deployer.png"}
+        %div{:style => 'clear: both;'}
+
+:javascript
+  $('#bgvmramsize > button').click(function(){
+    $("#vmramsize").val($(this).text());
+  });
+  $('#bgvmnumberofcpus > button').click(function(){
+    $("#vmnumberofcpus").val($(this).text());
+  });
+  $('#bgvmnetwork > button').click(function(){
+    $("#vmnetwork").val($(this).text());
+  });
+
+  function form_defaults() {
+    if ($('#vmramsize').val() == '') {
+      $('#vmramsize').val($('#bgvmramsize > button').first().text());
+    }
+    if ($('#vmnumberofcpus').val() == '') {
+      $('#vmnumberofcpus').val($('#bgvmnumberofcpus > button').first().text());
+    }
+    if ($('#vmnetwork').val() == '') {
+      $('#vmnetwork').val($('#bgvmnetwork > button').first().text());
+    }
+  }
+
+  function form_parameters_changed() {
+    // "Click" the buttons according to the params
+    v = $('#vmramsize').val();      $("#bgvmramsize > button:contains('"+v+"')").click();
+    v = $('#vmnumberofcpus').val(); $("#bgvmnumberofcpus > button:contains('"+v+"')").click();
+    v = $('#vmnetwork').val();      $("#bgvmnetwork > button:contains('"+v+"')").click();
+  }
+
+  $(document).ready(function() {
+    $('#submit.btn').click(function(){
+      $('#buildvmform').submit();
+    });
+    $('#clear.btn').click(function(){
+      $('#vmramsize').val('');
+      $('#vmnumberofcpus').val('');
+      $('#vmnetwork').val('');
+      form_defaults();
+      form_parameters_changed();
+    });
+    form_defaults();
+    form_parameters_changed();
+  })

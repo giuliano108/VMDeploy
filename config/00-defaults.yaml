@@ -1,0 +1,35 @@
+DEFAULTS: &DEFAULTS
+  datamapper_require: 'dm-sqlite-adapter'
+  datamapper_adapter: 'sqlite3'
+  datamapper_parameters: 'blah'
+  support_email: 'it@blah.com'
+  allowed_users_regexps:
+  - '^.*@blah.com'
+  - 'user@domain.com'
+  pony_via: :sendmail
+  pony_options: {}
+  mailer_from: 'root@blah.com'
+  mailer_recipients: 
+    - john@doe.com
+  vcenter_cfg:
+    :host: '192.168.123.123'
+    :user: 'username'
+    :password: 'password'
+    :insecure: true
+    :dcname: 'Blah'
+  deployer_params:
+    :ram_sizes:
+    - '512MB'
+    - '2GB'
+    - '4GB'
+    :number_of_cpus:
+    - '1'
+    - '2'
+    :networks:
+    - 'Internal'
+    - 'Public'
+    :ruby_versions:
+    - 'ruby1.9=2:1.9.2p290'
+    :departments:
+    - 'dept1'
+    - 'dept2'

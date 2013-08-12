@@ -1,0 +1,7 @@
+.*.swp
+log
+/config/01-development.yaml
+/config/01-production.yaml
+Capfile
+dump.rdb
+.vagrant

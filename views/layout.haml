@@ -1,0 +1,42 @@
+!!!
+%html{:lang => 'en'}
+  %head
+    %title= @title || VMDeploy::ApplicationTitle
+    %link{:href => '/bootstrap.min.css', :rel => 'stylesheet', :type => 'text/css'}
+    :css
+      .navbar .brand {
+        -moz-transition: all 0.2s linear 0s;
+        color: #AD3300;
+        float: right;
+        font-weight: bold;
+        margin-left: 20px;
+        padding-left: 0;
+        padding-right: 0;
+        text-shadow: 0 0 5px #AD3300;
+      }
+      img#splashimage { vertical-align: middle; }
+    %link{:href => '/favicon.ico', :rel => 'shortcut icon'}
+    %script{:type => 'text/javascript', :src => 'js/jquery-1.7.2.min.js'}
+    %script{:type => 'text/javascript', :src => 'js/bootstrap.min.js'}
+  %body
+    .navbar 
+      .navbar-inner
+        %a.brand{:href => '/'} vm-deploy
+        %ul.nav
+          - if authorized?
+            %li
+              %a{:href => '/resque', :target => '_blank'} Jobs Queue
+        - if authorized?
+          %a.btn.btn-small.pull-right{:href => '/logout'}Logout
+          %p.navbar-text.pull-right #{current_user} 
+        -else
+          %p.navbar-text.pull-right (not logged in)
+
+    #content= yield
+    %footer
+      .container
+        .pull-left
+          Brought to you by
+          %a{:href => "mailto:#{VMDeploy[:support_email]}?subject=vmdeploy"} IT
+        .pull-right= "(#{Sinatra::Base.environment.to_s} on #{request.env['SERVER_SOFTWARE'].gsub(/[ \/].*$/, '')})"
+        
