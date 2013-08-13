@@ -8,6 +8,9 @@ module VMDeploy
         if VMDeploy.get_environment == 'development'
             VMDeploy[:datamapper_parameters] = File.join(base_path,VMDeploy[:datamapper_parameters])
         end
+        [:puppet_scripts_subdir, :puppet_pkg_subdir].each do |var|
+            VMDeploy[var] = File.join(base_path,VMDeploy[var])
+        end
     end
 
     def self.dm_setup

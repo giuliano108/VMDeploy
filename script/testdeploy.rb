@@ -4,14 +4,13 @@ require 'vmdeploycommon'
 
 params = JSON.parse <<EOJ
 {"vmname":"gtest",
-"owner":"giuliano.cioffi@forward.co.uk",
+"owner":"giuliano@108.bz",
 "vmramsize":"512MB",
 "vmnumberofcpus":"1",
 "vmnetwork":"Internal",
 "rubyversion":"ruby1.9=2:1.9.2p290",
-"department":"uSwitch"}
+"department":"IT"}
 EOJ
 
-job_id = VMDeploy::Jobs::Deployer::Vagrant.create(params)
-
+job_id = VMDeploy::Jobs::Deployer::VMware.create(params)
 puts "Created job: #{job_id}"

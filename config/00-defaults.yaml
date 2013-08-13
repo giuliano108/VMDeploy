@@ -12,24 +12,67 @@ DEFAULTS: &DEFAULTS
   mailer_recipients: 
     - john@doe.com
   vcenter_cfg:
-    :host: '192.168.123.123'
-    :user: 'username'
-    :password: 'password'
-    :insecure: true
-    :dcname: 'Blah'
+    host: '192.168.123.123'
+    user: 'username'
+    password: 'password'
+    insecure: true
+    dcname: 'Blah'
+  concurrent_cloners: 4 # Total number of resque workers is set in the Procfile
+  pool_folder: '/DCname/vm/foldername'
+  master_template_vmname: 'poolvm-template'
+  valid_pool_vmname: '^poolvm[1234]$' # VMs whose name matches this regexp are good for deployment
+  valid_pool_hostname: '^precise64$' # Boostrap will be attempted only if hostname matches this regexp
+  pool_vm_username: 'username'
+  pool_vm_password: 'password'
+  pool_vm_bootstrap_interface: 'eth0'
+  pool_vm_vnic_name: 'Network adapter 1'
   deployer_params:
-    :ram_sizes:
+    ram_sizes:
     - '512MB'
     - '2GB'
     - '4GB'
-    :number_of_cpus:
+    number_of_cpus:
     - '1'
     - '2'
-    :networks:
+    networks:
     - 'Internal'
     - 'Public'
-    :ruby_versions:
+    ruby_versions:
     - 'ruby1.9=2:1.9.2p290'
-    :departments:
+    departments:
     - 'dept1'
     - 'dept2'
+  vlan_groups:
+    'Internal': # You can have multiple groups, each one containing a number of VLANs
+      'blah1':
+        network: '192.168.123.0'
+        netmask: '255.255.255.0'
+        gateway: '192.168.123.1'
+        domainname: 'domain.com'
+        dnsservers: ['192.168.123.10', '192.168.123.11']
+        searchdomains: ['domain.com'] 
+      'blah2':
+        network: '192.168.124.0'
+        netmask: '255.255.255.0'
+        gateway: '192.168.124.1'
+        domainname: 'domain.com'
+        dnsservers: ['192.168.123.10', '192.168.123.11']
+        searchdomains: ['domain.com'] 
+    'Public':
+      'DMZ1':
+        network: '1.1.1.0'
+        netmask: '255.255.255.0'
+        gateway: '1.1.1.1'
+        domainname: 'blah.com'
+        dnsservers: ['8.8.8.8', '8.8.4.4']
+        searchdomains: ['blah.com'] 
+      'DMZ2':
+        network: '1.1.2.0'
+        netmask: '255.255.255.0'
+        gateway: '1.1.2.1'
+        domainname: 'blah.com'
+        dnsservers: ['8.8.8.8', '8.8.4.4']
+        searchdomains: ['blah.com'] 
+  puppet_subdir: 'puppet'
+  puppet_pkg_subdir: 'pkg' # gets turned into an absolute path during preinit
+  puppet_scripts_subdir: 'puppet-it-scripts' # gets turned into an absolute path during preinit

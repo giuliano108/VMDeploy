@@ -17,8 +17,11 @@ gem 'resque'
 gem 'foreman'
 gem 'thin'
 gem 'resque-status'
+gem 'resque-concurrent-restriction'
 gem 'activemodel'
 gem 'nsconfig', :git => 'git://github.com/giuliano108/nsconfig.git', :tag => 'v0.1.0'
+gem 'rye'
+gem 'activesupport', '<4.0.0'
 
 group :production do
     gem 'dm-mysql-adapter'
@@ -27,5 +30,6 @@ end
 group :development do
     gem 'sinatra-reloader'
     gem 'pry'
+    gem 'pry-nav'
     gem 'dm-sqlite-adapter'
 end

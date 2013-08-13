@@ -1,0 +1,17 @@
+--- 
+classes: 
+  vmdeploybootstrap: 
+    interface: <%= params[:interface] %>
+    ip: <%= params[:ip] %>
+    netmask: <%= params[:netmask] %>
+    gateway: <%= params[:gateway] %>
+    hostname: <%= params[:hostname] %>
+    domainname: <%= params[:domainname] %>
+    dnsservers:
+<% params[:dnsservers].each do |v| -%>
+    - <%= v %>
+<% end -%>
+    searchdomains:
+<% params[:searchdomains].each do |v| -%>
+    - <%= v %>
+<% end -%>

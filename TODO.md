@@ -1,6 +1,17 @@
+- ~~Before attempting to bootstrap a box, check if the hostname is what you expect it to be~~
 - capify
 - Deployer jobs should first of all check if a VM by that name alread exists.
-  I don't think they can do that by simply querying vCenter
+  Simply querying vCenter won't work if two VMs with the same name get deployed at the same time.
 - resque/status_server might need some (monkey)patching. Too many params screw the layout up... 
-- VMDeploy::Exceptions module
 - log the "creator" somewhere! (it might be different than the "owner")
+- Authentication on /resque/status
+- Check if pool server is on a specific network?
+- When looking for pool servers, check for specific attributes (vmomi.rb/find_pool_templates)
+- ~~get rid of the two queues, one (with concurrent restriction) is enough~~
+- ~~catch DataMapper exceptions and write the error message in the log file~~
+- annotations
+  - On the VCenter, annotate a VM with the creator's name
+  - Annotate pool servers, and look for that information when selecting one
+- ~~vmomi.rb: get VM uuid (will be stored in the IP/VLAN DB)~~
+- ~~use name parameters in vmomi.rb/reconfig_vm~~
+- Move deployed VM to the right folder

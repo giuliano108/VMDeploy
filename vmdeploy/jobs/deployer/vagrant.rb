@@ -9,21 +9,8 @@
 #     end
 # - This deployer class will attempt to start the VM, then bootstrap it with Puppet.
 module VMDeploy::Jobs::Deployer
-    class Vagrant
-        include VMDeploy::Loggr
+    class Vagrant < VMDeploy::Jobs::Job
         include VMDeploy::Jobs::Deployer::Shared
-        include Resque::Plugins::Status
-        @queue = :deployer
-
-        def initialize(uuid, options={})
-            super uuid, options
-            log_setup(File.join(VMDeploy::LogDir,'deployer.log'),self.class.to_s,uuid.to_s)
-        end
-
-        def bailout(message)
-            log.error message
-            fail message
-        end
 
 		def get_vm_state
 			state = nil
@@ -66,9 +53,27 @@ module VMDeploy::Jobs::Deployer
 				bailout "VM isn't on" unless vm_state == 'on'
 				log.info "VM is #{vm_state}"
 			end
-			log.info "Obatainig SSH parameters"
+			log.info "Obtaining SSH parameters"
 			ssh_params = get_ssh_params
 			log.info ssh_params.inspect
+            progress_state_key('pool_vm_bootstrap')
+            log.info "Bootstrapping"
+            bs = VMDeploy::Bootstrap.new( uuid,
+                :user => ssh_params['User'],
+                :host => ssh_params['HostName'],
+                :port => ssh_params['Port'],
+                :key  => ssh_params['IdentityFile']
+            )
+            bs.puppet_conditional_install_precise
+            bs.apply! :interface => 'eth0',
+                      :ip => '10.0.2.15',
+                      :netmask => '255.255.255.0',
+                      :gateway => '10.0.2.2',
+                      :hostname => 'bootbox',
+                      :domainname => 'vagrant.lan',
+                      :dnsservers => ['8.8.8.8', '8.8.4.4'],
+                      :searchdomains => ['vagrant.lan','whatever.com']
+            log.info "Done!"
             progress_state_key('done')
         rescue Exception => e
             log.error e.message

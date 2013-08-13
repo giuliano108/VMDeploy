@@ -13,6 +13,7 @@ module VMDeploy::Jobs::Deployer
             { :key => 'vm_check_bootstrap_successful', :message => 'Checking if Bootstrap succeeded'},
             { :key => 'notify_owner',                  :message => 'Deploy looks ok, notifying the Owner'},
             { :key => 'vm_vmotion',                    :message => 'Moving VM to production datastore'},
+            { :key => 'pool_vm_replace',               :message => 'Replacing the pool VM with a new one'},
             { :key => 'viserver_disconnect',           :message => 'Disconnecting from the vCenter server'},
             { :key => 'done',                          :message => 'Deployment finished'}
         ]

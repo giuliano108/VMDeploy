@@ -124,7 +124,7 @@ module VMDeploy::Web
             protected
             @dparams = VMDeploy::DeployerParams.new params
             if @dparams.valid?
-                job_id = VMDeploy::Jobs::Deployer::Fake.create(@dparams.to_hash)
+                job_id = VMDeploy::Jobs::Deployer::VMware.create(params)
                 if job_id
                     flash[:notice] = "Your VM is being built. Progress info is available <a href=\"/resque/statuses/#{job_id}\" target=\"_blank\">here</a>."
                 else
