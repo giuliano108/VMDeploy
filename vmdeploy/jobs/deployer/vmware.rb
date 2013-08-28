@@ -8,7 +8,7 @@ module VMDeploy::Jobs::Deployer
         def perform
             log.info get_message_by_key('start') + ' -- ' + options.to_json
             progress_state_key('start')
-            bailout "VM params do not validate" unless VMDeploy::DeployerParams.new(options).valid?
+            fail "VM params do not validate" unless VMDeploy::DeployerParams.new(options).valid?
 
             vmomi = VMDeploy::VMOMI.new host:       VMDeploy[:vcenter_cfg][:host],
                                         user:       VMDeploy[:vcenter_cfg][:user],
@@ -22,20 +22,20 @@ module VMDeploy::Jobs::Deployer
 
             log.info get_message_by_key('vm_check_existence')
             progress_state_key('vm_check_existence')
-            bailout "A VM by this name already exists" if vmomi.find_vm_by_name(options['vmname'])
+            fail "A VM by this name already exists" if vmomi.find_vm_by_name(options['vmname'])
 
             log.info get_message_by_key('pool_vm_get')
             progress_state_key('pool_vm_get')
             pool_vms = vmomi.find_pool_templates(Regexp.new VMDeploy[:valid_pool_vmname])
-            bailout "No free pool servers are available" unless pool_vms.length > 0
+            fail "No free pool servers are available" unless pool_vms.length > 0
             pool_vm = pool_vms.last
             pool_vm_name = pool_vm.name
             log.info "Deploying from \"#{pool_vm.name}\", #{pool_vms.length - 1} pool VM(s) left"
 
             log.info get_message_by_key('pool_vm_bootstrap')
             progress_state_key('pool_vm_bootstrap')
-            bailout "The chosen pool VM \"#{pool_vm.name}\" is not powered on, this is unexpected" if pool_vm.runtime.powerState != 'poweredOn'
-            bailout "\"#{pool_vm.guest.ipAddress}\" doesn't look like an IP address" unless
+            fail "The chosen pool VM \"#{pool_vm.name}\" is not powered on, this is unexpected" if pool_vm.runtime.powerState != 'poweredOn'
+            fail "\"#{pool_vm.guest.ipAddress}\" doesn't look like an IP address" unless
                 /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/.match(pool_vm.guest.ipAddress)
             log.info "Pool VM IP is #{pool_vm.guest.ipAddress}"
             bs_options = { :user => VMDeploy[:pool_vm_username],
@@ -76,18 +76,23 @@ module VMDeploy::Jobs::Deployer
             progress_state_key('vm_wait_poweron')
             vmomi.wait_for_guest_ip pool_vm
             log.info "VMware tools report IP: #{pool_vm.guest.ipAddress}"
-            bailout "Allocated IP and current VM IP don't match (#{ip.address}/#{pool_vm.guest.ipAddress})" unless ip.address == pool_vm.guest.ipAddress
+            fail "Allocated IP and current VM IP don't match (#{ip.address}/#{pool_vm.guest.ipAddress})" unless ip.address == pool_vm.guest.ipAddress
 
             log.info get_message_by_key('vm_check_bootstrap_successful')
             progress_state_key('vm_check_bootstrap_successful')
             bs_options[:host] = ip.address
             bs = VMDeploy::Bootstrap.new uuid, bs_options
             bootstrapped = bs.bootstrap_success?
-            bailout 'Bootstrap seemingly failed' unless bootstrapped
+            fail 'Bootstrap seemingly failed' unless bootstrapped
             log.info 'Bootstrap OK'
 
             log.info get_message_by_key('notify_owner')
             progress_state_key('notify_owner')
+            VMDeploy::Email::Mailer.send VMDeploy[:mailer_from],
+                                         [options['owner'], options['creator'], VMDeploy[:support_email]],
+                                         "\"#{options['vmname']}\" has been deployed",
+                                         VMDeploy::Email::Success.render(:params => options,
+                                                                         :ip => ip.address)
 
             log.info get_message_by_key('pool_vm_replace')
             progress_state_key('pool_vm_replace')
@@ -96,10 +101,19 @@ module VMDeploy::Jobs::Deployer
 
             log.info get_message_by_key('done')
             progress_state_key('done')
-        rescue DataMapper::SaveFailureError => e
-            log.error "#{e.message} (#{e.resource.errors.inspect})"
         rescue Exception => e
-            log.error e.message
+            if e.is_a? DataMapper::SaveFailureError
+                message = "#{e.message} (#{e.resource.errors.inspect})"
+            else 
+                message = e.message
+            end
+            log.error message
+            VMDeploy::Email::Mailer.send VMDeploy[:mailer_from],
+                                         [options['owner'], options['creator'], VMDeploy[:support_email]],
+                                         "Error while deploying \"#{options['vmname']}\"",
+                                         VMDeploy::Email::Failure.render(:params => options,
+                                                                         :message => message,
+                                                                         :support_email => VMDeploy[:support_email])
             raise
         end
         

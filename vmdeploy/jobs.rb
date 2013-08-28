@@ -12,11 +12,6 @@ module VMDeploy::Jobs
             super uuid, options
             log_setup(File.join(VMDeploy::LogDir,'vmdeploy.log'),self.class.to_s,uuid.to_s)
         end
-
-        def bailout(message)
-            log.error message
-            fail message
-        end
     end
 end
 

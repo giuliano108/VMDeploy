@@ -133,7 +133,7 @@ module VMDeploy
                     break
                 end
             end
-            raise "Can't SSH into the VM" unless connected
+            fail "Can't SSH into the VM" unless connected
             bootstrapped
         end
     end

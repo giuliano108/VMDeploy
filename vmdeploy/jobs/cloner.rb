@@ -10,7 +10,7 @@ module VMDeploy::Jobs
         def perform
             log.info 'Start' + ' -- ' + options.to_json
             progress_state 0, 'Start'
-            bailout "Missing 'dst_vm_name' parameter" unless options['dst_vm_name'] && !options['dst_vm_name'].empty?
+            fail "Missing 'dst_vm_name' parameter" unless options['dst_vm_name'] && !options['dst_vm_name'].empty?
 
             vmomi = VMDeploy::VMOMI.new host:       VMDeploy[:vcenter_cfg][:host],
                                         user:       VMDeploy[:vcenter_cfg][:user],
@@ -22,7 +22,7 @@ module VMDeploy::Jobs
             vmomi.connect
 
             master_template_vm = vmomi.find_vm_by_name VMDeploy[:master_template_vmname]
-            bailout "Cannot find the master template VM (#{VMDeploy[:master_template_vmname]})" unless master_template_vm
+            fail "Cannot find the master template VM (#{VMDeploy[:master_template_vmname]})" unless master_template_vm
             log.info 'Cloning...'
             result = vmomi.clone master_template_vm, VMDeploy[:pool_folder], options['dst_vm_name'] do |p|
                 progress_state(p, "Cloning: #{p}%") if p

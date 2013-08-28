@@ -15,3 +15,4 @@
 - ~~vmomi.rb: get VM uuid (will be stored in the IP/VLAN DB)~~
 - ~~use name parameters in vmomi.rb/reconfig_vm~~
 - Move deployed VM to the right folder
+- Failed jobs notifications?

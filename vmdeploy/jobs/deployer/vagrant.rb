@@ -22,8 +22,8 @@ module VMDeploy::Jobs::Deployer
 					end
 				end
 			end
-			bailout "Can't seem to run/understand 'vagrant status'" if state.nil?
-			bailout "Unknown status returned by 'vagrant status'" unless state == 'running' or state == 'poweroff'
+			fail "Can't seem to run/understand 'vagrant status'" if state.nil?
+			fail "Unknown status returned by 'vagrant status'" unless state == 'running' or state == 'poweroff'
 			return (state == 'running') ? 'on' : 'off'
 		end
 
@@ -50,7 +50,7 @@ module VMDeploy::Jobs::Deployer
 				log.info 'Attempting to power VM up'
 				IO.popen('vagrant up') { |f| f.readlines }
 				vm_state = get_vm_state
-				bailout "VM isn't on" unless vm_state == 'on'
+				fail "VM isn't on" unless vm_state == 'on'
 				log.info "VM is #{vm_state}"
 			end
 			log.info "Obtaining SSH parameters"
