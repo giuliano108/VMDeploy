@@ -9,7 +9,6 @@ params = JSON.parse <<EOJ
 "vmramsize":"512MB",
 "vmnumberofcpus":"1",
 "vmnetwork":"Internal",
-"rubyversion":"ruby1.9=2:1.9.2p290",
 "department":"IT"}
 EOJ
 

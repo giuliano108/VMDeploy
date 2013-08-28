@@ -1,7 +1,7 @@
 module VMDeploy::Jobs
-    class Cloner < Job
+    class Mover < Job
         extend Resque::Plugins::ConcurrentRestriction 
-        concurrent VMDeploy[:concurrent_cloners]
+        concurrent VMDeploy[:concurrent_movers]
 
         def progress_state percent, message
             at(percent.round, 100, message)
@@ -10,7 +10,8 @@ module VMDeploy::Jobs
         def perform
             log.info 'Start' + ' -- ' + options.to_json
             progress_state 0, 'Start'
-            fail "Missing 'dst_vm_name' parameter" unless options['dst_vm_name'] && !options['dst_vm_name'].empty?
+            fail "Missing 'src_vm_path' parameter" unless options['src_vm_path'] && !options['src_vm_path'].empty?
+            fail "Missing 'dst_ds_path' parameter" unless options['dst_ds_path'] && !options['dst_ds_path'].empty?
 
             vmomi = VMDeploy::VMOMI.new host:       VMDeploy[:vcenter_cfg][:host],
                                         user:       VMDeploy[:vcenter_cfg][:user],
@@ -21,13 +22,11 @@ module VMDeploy::Jobs
             log.info 'Connecting to the vCenter server'
             vmomi.connect
 
-            master_template_vm = vmomi.find_vm_by_name VMDeploy[:master_template_vmname]
-            fail "Cannot find the master template VM (#{VMDeploy[:master_template_vmname]})" unless master_template_vm
-            log.info 'Cloning...'
-            result = vmomi.clone master_template_vm, VMDeploy[:pool_folder], options['dst_vm_name'] do |p|
-                progress_state(p, "Cloning: #{p}%") if p
+            log.info 'Moving...'
+            result = vmomi.vmotion options['src_vm_path'], options['dst_ds_path'] do |p|
+                progress_state(p, "Moving: #{p}%") if p
             end
-            progress_state(100, "Clone complete") if result
+            progress_state(100, "VMotion complete") if result
             log.info 'Disconnecting from the vCenter server'
             vmomi.close
             log.info 'done'
@@ -37,7 +36,7 @@ module VMDeploy::Jobs
         end
 
         def name
-            "#{VMDeploy[:master_template_vmname]}/#{options['dst_vm_name']}"
+            "#{options['src_vm_path'].split('/').last}/#{options['dst_ds_path'].split('/').last}"
         end
     end
 end

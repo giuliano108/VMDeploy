@@ -44,13 +44,6 @@
                   %button.btn{:type => 'button'} #{network}
               %input{:type => 'hidden', :name => 'vmnetwork', :id => 'vmnetwork', :value => params[:vmnetwork]}
               - buildvmform_show_validation_error(:vmnetwork)
-          - buildvmform_control_group(:rubyversion) do
-            %label.control-label{:for => 'rubyversion'}Ruby Version
-            .controls
-              %select{:name => 'rubyversion', :id => 'rubyversion'}
-                - VMDeploy[:deployer_params][:ruby_versions].each do |ruby|
-                  %option{:value => ruby} #{ruby}
-              - buildvmform_show_validation_error(:rubyversion)
           - buildvmform_control_group(:department) do
             %label.control-label{:for => 'department'}Department
             .controls

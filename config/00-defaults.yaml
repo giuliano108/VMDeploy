@@ -17,8 +17,11 @@ DEFAULTS: &DEFAULTS
     password: 'password'
     insecure: true
     dcname: 'Blah'
-  concurrent_cloners: 4 # Total number of resque workers is set in the Procfile
+  concurrent_cloners: 3 # Total number of resque workers is set in the Procfile
+  concurrent_movers: 3 # Total number of resque workers is set in the Procfile
   pool_folder: '/DCname/vm/foldername'
+  destination_folder: '/DCname/vm/VMDeployed'
+  destination_datastore: '/DCname/datastore/DSname'
   master_template_vmname: 'poolvm-template'
   valid_pool_vmname: '^poolvm[1234]$' # VMs whose name matches this regexp are good for deployment
   valid_pool_hostname: '^precise64$' # Boostrap will be attempted only if hostname matches this regexp

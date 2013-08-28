@@ -86,6 +86,10 @@ module VMDeploy::Jobs::Deployer
             fail 'Bootstrap seemingly failed' unless bootstrapped
             log.info 'Bootstrap OK'
 
+            log.info get_message_by_key('vm_move_into_folder')
+            progress_state_key('vm_move_into_folder')
+            vmomi.move_vm_into_folder pool_vm, VMDeploy[:destination_folder]
+
             log.info get_message_by_key('notify_owner')
             progress_state_key('notify_owner')
             VMDeploy::Email::Mailer.send VMDeploy[:mailer_from],
@@ -94,10 +98,20 @@ module VMDeploy::Jobs::Deployer
                                          VMDeploy::Email::Success.render(:params => options,
                                                                          :ip => ip.address)
 
+            log.info get_message_by_key('vm_vmotion')
+            progress_state_key('vm_vmotion')
+            job_id = VMDeploy::Jobs::Mover.create :src_vm_path => "#{VMDeploy[:destination_folder]}/#{options['vmname']}",
+                                                  :dst_ds_path => VMDeploy[:destination_datastore]
+            log.info "VMotion job id: #{job_id}"
+
             log.info get_message_by_key('pool_vm_replace')
             progress_state_key('pool_vm_replace')
             job_id = VMDeploy::Jobs::Cloner.create :dst_vm_name => pool_vm_name
             log.info "Pool VM replace job id: #{job_id}"
+
+            log.info get_message_by_key('viserver_connect')
+            progress_state_key('viserver_connect')
+            vmomi.close
 
             log.info get_message_by_key('done')
             progress_state_key('done')

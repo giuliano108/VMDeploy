@@ -14,5 +14,6 @@
   - Annotate pool servers, and look for that information when selecting one
 - ~~vmomi.rb: get VM uuid (will be stored in the IP/VLAN DB)~~
 - ~~use name parameters in vmomi.rb/reconfig_vm~~
-- Move deployed VM to the right folder
-- Failed jobs notifications?
+- ~~Move deployed VM to the right folder~~
+- ~~Failed jobs notifications?~~ Did that only for Jobs::Deployer::VMware
+- Submitting Jobs from console.rb doesn't work

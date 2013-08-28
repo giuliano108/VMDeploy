@@ -11,6 +11,7 @@ module VMDeploy::Jobs::Deployer
             { :key => 'vm_start',                      :message => 'Starting up VM'},
             { :key => 'vm_wait_poweron',               :message => 'Waiting until the VM is on'},
             { :key => 'vm_check_bootstrap_successful', :message => 'Checking if Bootstrap succeeded'},
+            { :key => 'vm_move_into_folder',           :message => 'Moving VM into its final VCentre folder'},
             { :key => 'notify_owner',                  :message => 'Deploy looks ok, notifying the Owner'},
             { :key => 'vm_vmotion',                    :message => 'Moving VM to production datastore'},
             { :key => 'pool_vm_replace',               :message => 'Replacing the pool VM with a new one'},
