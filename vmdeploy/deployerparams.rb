@@ -6,14 +6,15 @@ module VMDeploy
 		include ActiveModel::Conversion
 		extend ActiveModel::Naming
 
-		attr_accessor :vmname, :owner, :vmramsize, :vmnumberofcpus,
+		attr_accessor :vmname, :owner, :creator, :vmramsize, :vmnumberofcpus,
 			          :vmnetwork, :rubyversion, :department    
 
-		validates_presence_of :vmname, :owner, :vmramsize, :vmnumberofcpus,
+		validates_presence_of :vmname, :owner, :creator, :vmramsize, :vmnumberofcpus,
 						      :vmnetwork, :rubyversion, :department    
 
 		validates :vmname, :format => {:with => /^[a-z\d\-]+$/i, :message => 'contains invalid characters'}, :length => {:minimum => 3, :message => 'is too short'}
 		validates :owner,  :format => {:with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => 'doesn\'t look like a valid email address'}
+		validates :creator,  :format => {:with => /^[-a-z0-9_+\.]+\@([-a-z0-9]+\.)+[a-z0-9]{2,4}$/i, :message => 'doesn\'t look like a valid email address'}
 		validates :vmramsize, :inclusion => {:in => VMDeploy[:deployer_params][:ram_sizes], :message => 'is invalid'}
 		validates :vmnumberofcpus, :inclusion => {:in => VMDeploy[:deployer_params][:number_of_cpus], :message => 'is invalid'}
 		validates :vmnetwork, :inclusion => {:in => VMDeploy[:deployer_params][:networks], :message => 'is invalid'}

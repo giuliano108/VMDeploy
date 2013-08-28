@@ -5,6 +5,7 @@ require 'vmdeploycommon'
 params = JSON.parse <<EOJ
 {"vmname":"gtest",
 "owner":"giuliano@108.bz",
+"creator":"giuliano@108.bz",
 "vmramsize":"512MB",
 "vmnumberofcpus":"1",
 "vmnetwork":"Internal",

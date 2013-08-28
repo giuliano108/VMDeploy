@@ -3,7 +3,7 @@
 - Deployer jobs should first of all check if a VM by that name alread exists.
   Simply querying vCenter won't work if two VMs with the same name get deployed at the same time.
 - resque/status_server might need some (monkey)patching. Too many params screw the layout up... 
-- log the "creator" somewhere! (it might be different than the "owner")
+- ~~log the "creator" somewhere! (it might be different than the "owner")~~
 - Authentication on /resque/status
 - Check if pool server is on a specific network?
 - When looking for pool servers, check for specific attributes (vmomi.rb/find_pool_templates)

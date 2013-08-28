@@ -122,6 +122,7 @@ module VMDeploy::Web
 
         post '/build' do
             protected
+            params['creator'] = session[:username]
             @dparams = VMDeploy::DeployerParams.new params
             if @dparams.valid?
                 job_id = VMDeploy::Jobs::Deployer::VMware.create(params)
