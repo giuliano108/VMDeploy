@@ -1,5 +1,5 @@
 - ~~Before attempting to bootstrap a box, check if the hostname is what you expect it to be~~
-- capify
+- ~~capify~~
 - Deployer jobs should first of all check if a VM by that name alread exists.
   Simply querying vCenter won't work if two VMs with the same name get deployed at the same time.
 - resque/status_server might need some (monkey)patching. Too many params screw the layout up... 
@@ -16,4 +16,4 @@
 - ~~use name parameters in vmomi.rb/reconfig_vm~~
 - ~~Move deployed VM to the right folder~~
 - ~~Failed jobs notifications?~~ Did that only for Jobs::Deployer::VMware
-- Submitting Jobs from console.rb doesn't work
+- ~~Submitting Jobs from console.rb doesn't work~~ Apparently they do work
