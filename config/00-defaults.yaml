@@ -9,8 +9,6 @@ DEFAULTS: &DEFAULTS
   pony_via: :sendmail
   pony_options: {}
   mailer_from: 'root@blah.com'
-  mailer_recipients: 
-    - john@doe.com
   vcenter_cfg:
     host: '192.168.123.123'
     user: 'username'
