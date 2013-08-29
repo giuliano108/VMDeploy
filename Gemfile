@@ -26,6 +26,7 @@ gem 'rye'
 gem 'activesupport', '<4.0.0'
 gem 'capistrano'
 gem 'rvm-capistrano'
+gem 'pry'
 
 group :production do
     gem 'dm-mysql-adapter'
@@ -33,7 +34,6 @@ end
 
 group :development do
     gem 'sinatra-reloader'
-    gem 'pry'
     gem 'pry-nav'
     gem 'dm-sqlite-adapter'
 end
