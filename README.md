@@ -16,7 +16,6 @@ No Windows required.
   - Installing Puppet (from the official repo, only if it doesn't already exist).
   - Dropping a Puppet manifests tarball on it, along with a couple of scripts (to _unpack_ and _apply_ the config) and a `declared_classes.yaml` file. In a nutshell: this is a _masterless_ Puppet setup where everything is stored in `/etc/puppet-it` (to avoid messing with other Puppet related stuff that might end up on the VM), and the classes to declare come from an [external node classifier](http://docs.puppetlabs.com/guides/external_nodes.html) script that takes the yaml file as input.
   - The Puppet config is applied. All it does at this stage is configuring the final IP address on the box, hostname, DNS servers and other network parameters.
-  - Speaking about the IP addres, the current Puppet 
 
 - The pool VM is shut down, its harware parameters are changed according to the User's choices (RAM, CPU, VLAN, ...), then it's powered back on. It's also moved to a specific VCenter folder (`destination_folder`).
 
