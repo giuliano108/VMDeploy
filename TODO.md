@@ -17,3 +17,6 @@
 - ~~Move deployed VM to the right folder~~
 - ~~Failed jobs notifications?~~ Did that only for Jobs::Deployer::VMware
 - ~~Submitting Jobs from console.rb doesn't work~~ Apparently they do work
+- Retrying jobs from Resque's web UI works, but nothing is shown under "statuses"
+- You can't create Jobs from console.rb on production, unless you are on the production machine (redis is always reached @localhost)
+- Make sure vmdeploy starts after redis
